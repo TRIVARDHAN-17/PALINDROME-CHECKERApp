@@ -1,81 +1,27 @@
 
+
 public class PalindromeCheckerApp {
-
-    static class Node {
-        char data;
-        Node next;
-
-        Node(char data) {
-            this.data = data;
-            this.next = null;
-        }
-    }
 
     public static void main(String[] args) {
 
+        String input = "madam";
 
-        String input = "level";
-        Node head = null;
-        Node tail = null;
+        boolean isPalindrome = isPalindrome(input, 0, input.length() - 1);
 
-        for (char c : input.toCharArray()) {
-            Node newNode = new Node(c);
-            if (head == null) {
-                head = newNode;
-                tail = newNode;
-            } else {
-                tail.next = newNode;
-                tail = newNode;
-            }
-        }
-
-        boolean isPalindrome = isPalindrome(head);
-
+        // Display result
         System.out.println("Input : " + input);
         System.out.println("Is Palindrome? : " + isPalindrome);
     }
 
-    public static boolean isPalindrome(Node head) {
 
-        if (head == null || head.next == null) {
+    public static boolean isPalindrome(String str, int start, int end) {
+
+        if (start >= end) {
             return true;
         }
-
-        Node slow = head;
-        Node fast = head;
-
-        while (fast != null && fast.next != null) {
-            slow = slow.next;
-            fast = fast.next.next;
+        if (str.charAt(start) != str.charAt(end)) {
+            return false;
         }
-        Node secondHalf = reverse(slow);
-
-        Node firstHalf = head;
-        Node tempSecond = secondHalf;
-
-        while (tempSecond != null) {
-            if (firstHalf.data != tempSecond.data) {
-                return false;
-            }
-            firstHalf = firstHalf.next;
-            tempSecond = tempSecond.next;
-        }
-
-        return true;
-    }
-
-    public static Node reverse(Node head) {
-        Node prev = null;
-        Node current = head;
-        Node nextNode;
-
-        while (current != null) {
-            nextNode = current.next;
-            current.next = prev;
-            prev = current;
-            current = nextNode;
-        }
-
-        return prev;
+        return isPalindrome(str, start + 1, end - 1);
     }
 }
