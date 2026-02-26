@@ -1,93 +1,36 @@
-import java.util.Stack;
-import java.util.ArrayDeque;
-import java.util.Deque;
-
+import java.util.Scanner;
 
 public class PalindromeCheckerApp {
 
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
 
-        String input = "civic";
+        System.out.print("Input : ");
+        String input = scanner.nextLine();
 
-        PalindromeStrategy strategy = new StackStrategy();
+        long startTime = System.nanoTime();
+        boolean isPalindrome = checkPalindrome(input);
+        long endTime = System.nanoTime();
 
+        long duration = endTime - startTime;
 
-        PalindromeContext context = new PalindromeContext(strategy);
+        System.out.println("Is Palindrome? : " + isPalindrome);
+        System.out.println("Execution Time : " + duration + " ns");
 
-        boolean result = context.executeStrategy(input);
-
-        System.out.println("Input : " + input);
-        System.out.println("Strategy Used : " + strategy.getClass().getSimpleName());
-        System.out.println("Is Palindrome? : " + result);
+        scanner.close();
     }
-}
 
-
-interface PalindromeStrategy {
-    boolean check(String input);
-}
-
-
-class StackStrategy implements PalindromeStrategy {
-
-    @Override
-    public boolean check(String input) {
-
-        if (input == null) return false;
-
-        String normalized = input.toLowerCase().replaceAll("[^a-z0-9]", "");
-
-        Stack<Character> stack = new Stack<>();
-
-        for (char c : normalized.toCharArray()) {
-            stack.push(c);
+    private static boolean checkPalindrome(String str) {
+        if (str == null) {
+            return false;
         }
-
-        for (char c : normalized.toCharArray()) {
-            if (c != stack.pop()) {
+        String cleanStr = str.replaceAll("\\s+", "").toLowerCase();
+        int length = cleanStr.length();
+        for (int i = 0; i < length / 2; i++) {
+            if (cleanStr.charAt(i) != cleanStr.charAt(length - 1 - i)) {
                 return false;
             }
         }
-
         return true;
-    }
-}
-
-class DequeStrategy implements PalindromeStrategy {
-
-    @Override
-    public boolean check(String input) {
-
-        if (input == null) return false;
-
-        String normalized = input.toLowerCase().replaceAll("[^a-z0-9]", "");
-
-        Deque<Character> deque = new ArrayDeque<>();
-
-        for (char c : normalized.toCharArray()) {
-            deque.addLast(c);
-        }
-
-        while (deque.size() > 1) {
-            if (!deque.removeFirst().equals(deque.removeLast())) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-}
-
-
-class PalindromeContext {
-
-    private PalindromeStrategy strategy;
-
-    public PalindromeContext(PalindromeStrategy strategy) {
-        this.strategy = strategy;
-    }
-
-    public boolean executeStrategy(String input) {
-        return strategy.check(input);
     }
 }
