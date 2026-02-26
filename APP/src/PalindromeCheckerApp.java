@@ -1,26 +1,39 @@
 import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
+
+
 public class PalindromeCheckerApp {
 
     public static void main(String[] args) {
 
-        String input = "racecar";
+        String input = "civic";
 
-        PalindromeChecker checker = new PalindromeChecker();
+        PalindromeStrategy strategy = new StackStrategy();
 
-        boolean result = checker.checkPalindrome(input);
+
+        PalindromeContext context = new PalindromeContext(strategy);
+
+        boolean result = context.executeStrategy(input);
 
         System.out.println("Input : " + input);
+        System.out.println("Strategy Used : " + strategy.getClass().getSimpleName());
         System.out.println("Is Palindrome? : " + result);
     }
 }
 
-class PalindromeChecker {
 
-    public boolean checkPalindrome(String input) {
+interface PalindromeStrategy {
+    boolean check(String input);
+}
 
-        if (input == null) {
-            return false;
-        }
+
+class StackStrategy implements PalindromeStrategy {
+
+    @Override
+    public boolean check(String input) {
+
+        if (input == null) return false;
 
         String normalized = input.toLowerCase().replaceAll("[^a-z0-9]", "");
 
@@ -37,5 +50,44 @@ class PalindromeChecker {
         }
 
         return true;
+    }
+}
+
+class DequeStrategy implements PalindromeStrategy {
+
+    @Override
+    public boolean check(String input) {
+
+        if (input == null) return false;
+
+        String normalized = input.toLowerCase().replaceAll("[^a-z0-9]", "");
+
+        Deque<Character> deque = new ArrayDeque<>();
+
+        for (char c : normalized.toCharArray()) {
+            deque.addLast(c);
+        }
+
+        while (deque.size() > 1) {
+            if (!deque.removeFirst().equals(deque.removeLast())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+
+
+class PalindromeContext {
+
+    private PalindromeStrategy strategy;
+
+    public PalindromeContext(PalindromeStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public boolean executeStrategy(String input) {
+        return strategy.check(input);
     }
 }
